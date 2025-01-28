@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -24,21 +23,26 @@ func NewCloseIoClient(apiKey string) *HttpCloseIoClient {
 	return &HttpCloseIoClient{apiKey: apiKey}
 }
 
-// Response represents the Close.io API response
-type Response struct {
+// LeadResponse represents the Close.io API response
+type LeadResponse struct {
 	Data []Lead `json:"data"`
 }
 
+// UserResponse represents the Close.io API response
+type UserResponse struct {
+	Data []User `json:"data"`
+}
+
 // CreateOrUpdateLeads handles creating or updating leads in bulk
-func (c *HttpCloseIoClient) CreateOrUpdateLead(lead ClickFlareLead) error {
-	existingLead, err := c.FindLeadByName(lead.Name)
+func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface) error {
+	existingLead, err := c.FindLeadByName(lead.GetName())
 	if err != nil {
 		return fmt.Errorf("failed to search for lead: %v", err)
 	}
 
 	if existingLead != nil {
 		// Update existing lead
-		lead.ID = existingLead.ID
+		lead.SetID(existingLead.ID)
 		if err := c.UpdateLead(lead); err != nil {
 			return fmt.Errorf("failed to update lead: %v", err)
 		}
@@ -71,7 +75,7 @@ func (c *HttpCloseIoClient) FindLeadByName(name string) (*Lead, error) {
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	var result Response
+	var result LeadResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
 	}
@@ -83,7 +87,7 @@ func (c *HttpCloseIoClient) FindLeadByName(name string) (*Lead, error) {
 }
 
 // CreateLead creates a new lead
-func (c *HttpCloseIoClient) CreateLead(lead ClickFlareLead) error {
+func (c *HttpCloseIoClient) CreateLead(lead LeadInterface) error {
 	data, err := json.Marshal(lead)
 	if err != nil {
 		return err
@@ -111,8 +115,8 @@ func (c *HttpCloseIoClient) CreateLead(lead ClickFlareLead) error {
 }
 
 // UpdateLead updates an existing lead
-func (c *HttpCloseIoClient) UpdateLead(lead ClickFlareLead) error {
-	url := fmt.Sprintf("https://api.close.com/api/v1/lead/%s/", lead.ID)
+func (c *HttpCloseIoClient) UpdateLead(lead LeadInterface) error {
+	url := fmt.Sprintf("https://api.close.com/api/v1/lead/%s/", lead.GetID())
 	data, err := json.Marshal(lead)
 	if err != nil {
 		return err
@@ -132,11 +136,45 @@ func (c *HttpCloseIoClient) UpdateLead(lead ClickFlareLead) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("failed to update lead: %s", body)
 	}
 
 	return nil
+}
+
+// UpdateLead updates an existing lead
+func (c *HttpCloseIoClient) GetUsers() ([]User, error) {
+
+	url := "https://api.close.com/api/v1/user/"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.SetBasicAuth(c.apiKey, "")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.sendRequestWithRateLimit(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var result UserResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	if len(result.Data) > 0 {
+		return result.Data, nil
+	}
+
+	return result.Data, err
 }
 
 // sendRequestWithRateLimit handles HTTP requests with rate limit management

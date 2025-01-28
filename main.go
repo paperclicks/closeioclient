@@ -161,13 +161,16 @@ func main() {
 	// 	return
 	// }
 
-	err := json.Unmarshal([]byte(newLeadBody), &newLead)
+	users, err := client.GetUsers()
+	fmt.Println(users)
+
+	err = json.Unmarshal([]byte(newLeadBody), &newLead)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return
 	}
 
-	if err := client.CreateOrUpdateLead(newLead); err != nil {
+	if err := client.CreateOrUpdateLead(&newLead); err != nil {
 		log.Fatalf("Error creating or updating leads: %v", err)
 	}
 }
