@@ -106,7 +106,7 @@ func (c *HttpCloseIoClient) CreateLead(lead LeadInterface) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("failed to create lead: %s", body)
 	}

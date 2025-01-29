@@ -155,11 +155,11 @@ func main() {
 
 	var newLead closeio.ClickFlareLead
 
-	// err := json.Unmarshal([]byte(leadBody), &lead)
-	// if err != nil {
-	// 	fmt.Println("Error parsing JSON:", err)
-	// 	return
-	// }
+	existingLead := closeio.ClickFlareLead{}
+	existingLead.Name = "test test"
+	if err := client.CreateOrUpdateLead(&existingLead); err != nil {
+		log.Fatalf("Error creating or updating leads: %v", err)
+	}
 
 	users, err := client.GetUsers()
 	fmt.Println(users)

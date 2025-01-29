@@ -54,28 +54,28 @@ type Phone struct {
 }
 
 type Custom struct {
-	CancellationDate           time.Time `json:"Cancellation date"`
-	ExternalID                 string    `json:"External ID,omitempty"`
-	FirstPayment               time.Time `json:"First payment,omitempty"`
-	LastLogin                  time.Time `json:"Last login,omitempty"`
-	LastPayment                time.Time `json:"Last payment,omitempty"`
-	LeadOwner                  string    `json:"Lead owner,omitempty"`
-	PhoneNumber                string    `json:"Phone number,omitempty"`
-	RevenueLast30Days          float64   `json:"Revenue last 30 days,omitempty"`
-	SignupDate                 time.Time `json:"Signup date,omitempty"`
-	SpendLast30Days            float64   `json:"Spend last 30 days,omitempty"`
-	SubscriptionPlan           string    `json:"Subscription plan,omitempty"`
-	SubscriptionStatus         string    `json:"Subscription status,omitempty"`
-	SurveyAvgMonthlySpend      string    `json:"Survey - Avg. Monthly Spend,omitempty"`
-	SurveyHowDidYouHearAboutUs string    `json:"Survey - How did you hear about us,omitempty"`
-	SurveyWhatDescribesYouBest string    `json:"Survey - What describes you best,omitempty"`
-	TotalPayments              float64   `json:"Total payments,omitempty"`
-	UserID                     string    `json:"User ID,omitempty"`
+	CancellationDate           *time.Time `json:"Cancellation date"`
+	ExternalID                 string     `json:"External ID,omitempty"`
+	FirstPayment               *time.Time `json:"First payment,omitempty"`
+	LastLogin                  *time.Time `json:"Last login,omitempty"`
+	LastPayment                *time.Time `json:"Last payment,omitempty"`
+	LeadOwner                  string     `json:"Lead owner,omitempty"`
+	PhoneNumber                string     `json:"Phone number,omitempty"`
+	RevenueLast30Days          float64    `json:"Revenue last 30 days,omitempty"`
+	SignupDate                 *time.Time `json:"Signup date,omitempty"`
+	SpendLast30Days            float64    `json:"Spend last 30 days,omitempty"`
+	SubscriptionPlan           string     `json:"Subscription plan,omitempty"`
+	SubscriptionStatus         string     `json:"Subscription status,omitempty"`
+	SurveyAvgMonthlySpend      string     `json:"Survey - Avg. Monthly Spend,omitempty"`
+	SurveyHowDidYouHearAboutUs string     `json:"Survey - How did you hear about us,omitempty"`
+	SurveyWhatDescribesYouBest string     `json:"Survey - What describes you best,omitempty"`
+	TotalPayments              float64    `json:"Total payments,omitempty"`
+	UserID                     string     `json:"User ID,omitempty"`
 }
 
 type User struct {
-	DateCreated           time.Time   `json:"date_created"`
-	DateUpdated           time.Time   `json:"date_updated"`
+	DateCreated           *time.Time  `json:"date_created"`
+	DateUpdated           *time.Time  `json:"date_updated"`
 	Email                 string      `json:"email"`
 	EmailVerifiedAt       interface{} `json:"email_verified_at"`
 	FirstName             interface{} `json:"first_name"`
