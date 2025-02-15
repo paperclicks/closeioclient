@@ -41,15 +41,15 @@ type Contact struct {
 }
 
 type Email struct {
-	Type           string `json:"type,omitempty"`
-	Email          string `json:"email,omitempty"`
-	IsUnsubscribed bool   `json:"is_unsubscribed,omitempty"`
+	Type           *string `json:"type,omitempty"`
+	Email          *string `json:"email,omitempty"`
+	IsUnsubscribed bool    `json:"is_unsubscribed,omitempty"`
 }
 
 type Phone struct {
-	Type           string      `json:"type,omitempty"`
-	Phone          string      `json:"phone,omitempty"`
-	PhoneFormatted string      `json:"phone_formatted,omitempty"`
+	Type           *string     `json:"type,omitempty"`
+	Phone          *string     `json:"phone,omitempty"`
+	PhoneFormatted *string     `json:"phone_formatted,omitempty"`
 	Country        interface{} `json:"country,omitempty"`
 }
 
