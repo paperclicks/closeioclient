@@ -86,3 +86,7 @@ type User struct {
 	LastUsedTimezone      interface{} `json:"last_used_timezone"`
 	Organizations         []string    `json:"organizations"`
 }
+
+type SearchResponse struct {
+	Data []Lead `json:"data"`
+}

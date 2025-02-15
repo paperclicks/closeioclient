@@ -35,7 +35,7 @@ type UserResponse struct {
 
 // CreateOrUpdateLeads handles creating or updating leads in bulk
 func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface) error {
-	existingLead, err := c.FindLeadByName(lead.GetName())
+	existingLead, err := c.SearchLead(lead.GetName())
 	if err != nil {
 		return fmt.Errorf("failed to search for lead: %v", err)
 	}
@@ -59,6 +59,37 @@ func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface) error {
 // FindLeadByName searches for a lead by its name
 func (c *HttpCloseIoClient) FindLeadByName(name string) (*Lead, error) {
 	url := fmt.Sprintf("https://api.close.com/api/v1/lead/?query=%s", url.QueryEscape(name))
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.SetBasicAuth(c.apiKey, "")
+
+	resp, err := c.sendRequestWithRateLimit(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var result LeadResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	if len(result.Data) > 0 {
+		return &result.Data[0], nil
+	}
+	return nil, nil
+}
+
+// FindLeadByNameOrContact searches for a lead by its name or contact name
+func (c *HttpCloseIoClient) FindLeadByNameOrContact(name string) (*Lead, error) {
+	query := fmt.Sprintf("name:\"%s\" OR contacts.name:\"%s\"", name, name)
+	url := fmt.Sprintf("https://api.close.com/api/v1/lead/?query=%s", query)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -213,4 +244,115 @@ func parseRateLimitResetHeader(header string) int {
 		}
 	}
 	return 0
+}
+
+// SearchLead searches for a lead or contact by name and returns the first matching lead ID
+func (c *HttpCloseIoClient) SearchLead(name string) (*Lead, error) {
+	url := "https://api.close.com/api/v1/data/search/"
+
+	queryPayload := fmt.Sprintf(`{
+		"limit": null,
+		"query": {
+			"negate": false,
+			"queries": [
+				{
+					"negate": false,
+					"object_type": "lead",
+					"type": "object_type"
+				},
+				{
+					"negate": false,
+					"queries": [
+						{
+							"negate": false,
+							"queries": [
+								{
+									"negate": false,
+									"queries": [
+										{
+											"condition": {
+												"mode": "full_words",
+												"type": "text",
+												"value": "%s"
+											},
+											"field": {
+												"field_name": "name",
+												"object_type": "lead",
+												"type": "regular_field"
+											},
+											"negate": false,
+											"type": "field_condition"
+										}
+									],
+									"type": "and"
+								},
+								{
+									"negate": false,
+									"related_object_type": "contact",
+									"related_query": {
+										"negate": false,
+										"queries": [
+											{
+												"condition": {
+													"mode": "full_words",
+													"type": "text",
+													"value": "%s"
+												},
+												"field": {
+													"field_name": "name",
+													"object_type": "contact",
+													"type": "regular_field"
+												},
+												"negate": false,
+												"type": "field_condition"
+											}
+										],
+										"type": "and"
+									},
+									"this_object_type": "lead",
+									"type": "has_related"
+								}
+							],
+							"type": "or"
+						}
+					],
+					"type": "and"
+				}
+			],
+			"type": "and"
+		},
+		      "_fields": {
+    "lead": ["contacts","custom", "display_name","description","url","status_id","organization_id","tasks","status_label","name","id","addresses","contacts","opportunities","custom","html_url","integration_links"]
+  },
+		"results_limit": null,
+		"sort": []
+	}`, name, name)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(queryPayload)))
+	if err != nil {
+		return nil, err
+	}
+	req.SetBasicAuth(c.apiKey, "")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.sendRequestWithRateLimit(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("failed to search lead: %s", body)
+	}
+
+	var result SearchResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	if len(result.Data) > 0 {
+		return &result.Data[0], nil
+	}
+	return nil, nil
 }
