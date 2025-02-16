@@ -6,6 +6,8 @@ type LeadInterface interface {
 	GetName() string // Example method for common behavior
 	GetID() string
 	SetID(id string)
+	SetOwner(owner string)
+	GetOwner() string
 }
 
 type Lead struct {

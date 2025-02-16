@@ -156,7 +156,7 @@ func main() {
 	existingLead.Name = "Ervin Hoxha tewt"
 	existingLead.PhoneNumber = "+355696867661"
 
-	if err := client.CreateOrUpdateLead(&existingLead); err != nil {
+	if err := client.CreateOrUpdateLead(&existingLead, ""); err != nil {
 		log.Fatalf("Error creating or updating leads: %v", err)
 	}
 

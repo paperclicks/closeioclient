@@ -34,7 +34,7 @@ type UserResponse struct {
 }
 
 // CreateOrUpdateLeads handles creating or updating leads in bulk
-func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface) error {
+func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface, leadOwner string) error {
 	existingLead, err := c.SearchLead(lead.GetName())
 	if err != nil {
 		return fmt.Errorf("failed to search for lead: %v", err)
@@ -48,6 +48,8 @@ func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface) error {
 		}
 	} else {
 		// Create new lead
+		// Set a lead owner
+		lead.SetOwner(leadOwner)
 		if err := c.CreateLead(lead); err != nil {
 			return fmt.Errorf("failed to create lead: %v", err)
 		}

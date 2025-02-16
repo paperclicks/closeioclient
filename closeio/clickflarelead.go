@@ -38,3 +38,11 @@ func (l *ClickFlareLead) GetID() string {
 func (l *ClickFlareLead) SetID(id string) {
 	l.ID = id
 }
+
+func (l *ClickFlareLead) SetOwner(owner string) {
+	l.ClickFlareCustomFields.LeadOwner = owner
+}
+
+func (l *ClickFlareLead) GetOwner() string {
+	return l.ClickFlareCustomFields.LeadOwner
+}
