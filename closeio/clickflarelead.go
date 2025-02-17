@@ -54,18 +54,23 @@ func (l *ClickFlareLead) RemoveDuplicatedContacts(existingContacts []Contact) {
 	}
 
 	newContacts := []Contact{}
-
+	var phone, email, existingEmail, existingPhone string
 	for _, contact := range l.Contacts {
 
 		contactExists := false
 
-		email := *contact.Emails[0].Email
-		phone := *contact.Phones[0].Phone
+		email = *contact.Emails[0].Email
+		phone = *contact.Phones[0].Phone
 
 		//check if there is a contact with the same email and phone number already
 		for _, existingContact := range existingContacts {
-			existingEmail := *existingContact.Emails[0].Email
-			existingPhone := *existingContact.Phones[0].Phone
+			if len(existingContact.Emails) > 0 {
+				existingEmail = *existingContact.Emails[0].Email
+			}
+			if len(existingContact.Phones) > 0 {
+				existingPhone = *existingContact.Phones[0].Phone
+
+			}
 
 			if email == existingEmail && phone == existingPhone {
 				contactExists = true
