@@ -49,6 +49,10 @@ func (l *ClickFlareLead) GetOwner() string {
 
 func (l *ClickFlareLead) RemoveDuplicatedContacts(existingContacts []Contact) {
 
+	if len(existingContacts) == 0 {
+		return
+	}
+
 	newContacts := []Contact{}
 
 	for _, contact := range l.Contacts {
