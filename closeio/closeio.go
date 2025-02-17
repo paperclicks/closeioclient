@@ -48,6 +48,10 @@ func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface, leadOwner str
 		if existingLead.LeadOwner == "" && leadOwner != "" {
 			lead.SetOwner(leadOwner)
 		}
+
+		//make sure to remove any duplicate contacts that already exists
+		lead.RemoveDuplicatedContacts(existingLead.Contacts)
+
 		if err := c.UpdateLead(lead); err != nil {
 			return fmt.Errorf("failed to update lead: %v", err)
 		}
