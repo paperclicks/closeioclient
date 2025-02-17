@@ -43,6 +43,11 @@ func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface, leadOwner str
 	if existingLead != nil {
 		// Update existing lead
 		lead.SetID(existingLead.ID)
+
+		//if the lead that we are updating exists but does not have an owner, and also a leadOwner has been generated, then set the lead owner
+		if existingLead.LeadOwner == "" && leadOwner != "" {
+			lead.SetOwner(leadOwner)
+		}
 		if err := c.UpdateLead(lead); err != nil {
 			return fmt.Errorf("failed to update lead: %v", err)
 		}

@@ -46,3 +46,28 @@ func (l *ClickFlareLead) SetOwner(owner string) {
 func (l *ClickFlareLead) GetOwner() string {
 	return l.ClickFlareCustomFields.LeadOwner
 }
+
+func (l *ClickFlareLead) RemoveDuplicatedContacts(existingContacts []Contact) {
+
+	newContacts := []Contact{}
+
+	for _, contact := range l.Contacts {
+
+		contactExists := false
+
+		//check if there is a contact with the same email and phone number already
+		for _, existingContact := range existingContacts {
+			if contact.Emails[0] == existingContact.Emails[0] && contact.Phones[0] == existingContact.Phones[0] {
+				contactExists = true
+			}
+		}
+		//if there is not a contact with same email and phone then add it to the list of new contacts
+		if !contactExists {
+			newContacts = append(newContacts, contact)
+		}
+	}
+
+	// set contacts of the lead to the list of new contacts so that only non existing contacts will be updated.
+	l.Contacts = newContacts
+
+}
