@@ -25,8 +25,8 @@ type ClickFlareCustomFields struct {
 	TotalPayments              float64    `json:"custom.cf_Xm7071TrrPBV4HFAEVt5x9XE1KGWOyVBrkIfni2jSKL,omitempty"`
 	CancellationDate           *time.Time `json:"custom.cf_iXiJfR6ADj7jjd9LkKzokkh1BDxdHMzpld9fcmHf0Vb,omitempty"`
 	UserID                     string     `json:"custom.cf_KUj0DbIykJYX5cRhRat69HsoZ52ALUOoqqB9xiCLuJX,omitempty"`
-	PreferredContactMethod     string     `json:"custom.cf_oQlsq3Zx39dcRd78etipVHIoH0DgVKYQI1W4ECJK2RU,omitempty"`
-	PreferredContact           string     `json:"custom.cf_IvJOWqRDnAtvuQwfZYUQXlmtOnp8INPtH8KAnotQzNc,omitempty"`
+	PreferredContactMethod     *string    `json:"custom.cf_oQlsq3Zx39dcRd78etipVHIoH0DgVKYQI1W4ECJK2RU,omitempty"`
+	PreferredContact           *string    `json:"custom.cf_IvJOWqRDnAtvuQwfZYUQXlmtOnp8INPtH8KAnotQzNc,omitempty"`
 }
 
 func (l *ClickFlareLead) GetName() string {
