@@ -243,7 +243,7 @@ func (c *HttpCloseIoClient) sendRequestWithRateLimit(req *http.Request) (*http.R
 // parseRateLimitResetHeader extracts the reset time in seconds from the RateLimit header
 func parseRateLimitResetHeader(header string) int {
 	log.Printf("RATE LIMIT HEADERS: %s", header)
-	parts := strings.Split(header, ",")
+	parts := strings.Split(header, ";")
 	for _, part := range parts {
 		if strings.Contains(part, "rate_reset=") {
 			value := strings.TrimSpace(strings.Split(part, "=")[1])
