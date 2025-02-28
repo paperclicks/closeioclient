@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	client := closeio.NewCloseIoClient("api_6ofO4BdefApUqQNHTg66kb.4UDSTDXWXka8vy8CHKXqZW")
+	client := closeio.NewCloseIoClient("api_1TcMvBuJJtm7AFw6WR700l.2M0zibrTg0JeukGLXSjbS6")
 
 	// 	leadBody := `{
 	//     "tasks": [],
@@ -152,9 +152,9 @@ func main() {
 	//     "custom.cf_KUj0DbIykJYX5cRhRat69HsoZ52ALUOoqqB9xiCLuJX": "123456789"
 	// }`
 
-	existingLead := closeio.ClickFlareLead{}
-	existingLead.Name = "Ervin Hoxha tewt"
-	existingLead.PhoneNumber = "+355696867661"
+	existingLead := closeio.OptimizerLead{}
+	existingLead.Name = "Ervin Hoxha"
+	existingLead.TrafficSources = []string{"Outbrain"}
 
 	if err := client.CreateOrUpdateLead(&existingLead, ""); err != nil {
 		log.Fatalf("Error creating or updating leads: %v", err)

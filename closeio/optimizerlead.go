@@ -28,7 +28,7 @@ type OptimizerCustomFields struct {
 	SurveyBestDescription    string     `json:"custom.cf_SE9WzW4dAxhEAMWzJTPzkESIzUSnvjMLL01iJM6zcJF,omitempty"`
 	TopPayingUser            string     `json:"custom.cf_ZCQk9ScxGXOahAq1Yo7RMWT6DsnxyWjwJD9nD2KEQws,omitempty"`
 	TotalPaymentsLast3Months float64    `json:"custom.cf_9o1E0Rt0014HZ88Vor16dNloL2L1bJg3VOF7Twf7Ve9,omitempty"`
-	TrafficSources           string     `json:"custom.cf_yIM1O5BtOW3zoOTXaq7flTJsu1h2u9q54PvgtaUrfql,omitempty"`
+	TrafficSources           []string   `json:"custom.cf_yIM1O5BtOW3zoOTXaq7flTJsu1h2u9q54PvgtaUrfql,omitempty"`
 	UserID                   string     `json:"custom.cf_L1oVCZYa3seTdcgR1k71ro8zC4exUkj3TGe2kQ8sHoR,omitempty"`
 }
 
