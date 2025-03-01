@@ -16,7 +16,7 @@ type OptimizerCustomFields struct {
 	FirstPayment             *time.Time `json:"custom.cf_MJbPmJXJM9pSEvSJOWKYCkrYqN3vGTV5r8HYjLk5N1K,omitempty"`
 	LastLogin                *time.Time `json:"custom.cf_WqXaCN7ZkT8jGMx623ysgBFQl1Et2fykX0vxdzar36e,omitempty"`
 	LastPayment              *time.Time `json:"custom.cf_7YmJjQd85K2NXaEVDkm885jrWxRAWCrNZEltNrJq7pD,omitempty"`
-	PhoneNumber              string     `json:"custom.cf_8JVU7KuWQ7aMukzZEb9buBJqBLlVtlRuUX2JcHkJJuE,omitempty"`
+	PhoneNumber              *string    `json:"custom.cf_8JVU7KuWQ7aMukzZEb9buBJqBLlVtlRuUX2JcHkJJuE,omitempty"`
 	PreferredContact         *string    `json:"custom.cf_bz5FTvg9lL55DkNE4IseXnSqKDqc5qx4sgrsbT1L8i4,omitempty"`
 	PreferredContactMethod   *string    `json:"custom.cf_NzOGLG8NoJIcezhs5hGeTryhlq9RW5uAa2dKlDNANof,omitempty"`
 	LeadOwner                string     `json:"custom.cf_2Zi5ZWiSlwNwlvByIvgE3JtoUa8Yqn8FnFdAtmGeUKS,omitempty"`
