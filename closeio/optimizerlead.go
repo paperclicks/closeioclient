@@ -65,8 +65,13 @@ func (l *OptimizerLead) RemoveDuplicatedContacts(existingContacts []Contact) {
 
 		contactExists := false
 
-		email = *contact.Emails[0].Email
-		phone = *contact.Phones[0].Phone
+		if len(contact.Emails) > 0 && contact.Emails[0].Email != nil {
+			email = *contact.Emails[0].Email
+		}
+
+		if len(contact.Phones) > 0 && contact.Phones[0].Phone != nil {
+			phone = *contact.Phones[0].Phone
+		}
 
 		//check if there is a contact with the same email and phone number already
 		for _, existingContact := range existingContacts {
