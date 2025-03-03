@@ -1,6 +1,9 @@
 package closeio
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type OptimizerLead struct {
 	Lead
@@ -71,6 +74,13 @@ func (l *OptimizerLead) RemoveDuplicatedContacts(existingContacts []Contact) {
 
 		if len(contact.Phones) > 0 && contact.Phones[0].Phone != nil {
 			phone = *contact.Phones[0].Phone
+			plusIndex := strings.Index(phone, "+")
+
+			phone = strings.ReplaceAll(phone, " ", "")
+
+			// Take substring from "+" onwards and remove all spaces
+			phone = phone[plusIndex:]
+
 		}
 
 		//check if there is a contact with the same email and phone number already
