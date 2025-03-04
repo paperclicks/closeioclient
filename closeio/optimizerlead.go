@@ -1,7 +1,6 @@
 package closeio
 
 import (
-	"strings"
 	"time"
 )
 
@@ -56,14 +55,15 @@ func (l *OptimizerLead) GetOwner() string {
 	return l.LeadOwner
 }
 
-func (l *OptimizerLead) RemoveDuplicatedContacts(existingContacts []Contact) {
+func (l *OptimizerLead) RemoveDuplicatedContacts(existingContacts []Contact) error {
 
 	if len(existingContacts) == 0 {
-		return
+		return nil
 	}
 
 	newContacts := []Contact{}
 	var phone, email, existingEmail, existingPhone string
+	var err error
 	for _, contact := range l.Contacts {
 
 		contactExists := false
@@ -73,13 +73,18 @@ func (l *OptimizerLead) RemoveDuplicatedContacts(existingContacts []Contact) {
 		}
 
 		if len(contact.Phones) > 0 && contact.Phones[0].Phone != nil {
-			phone = *contact.Phones[0].Phone
-			plusIndex := strings.Index(phone, "+")
+			// phone = *contact.Phones[0].Phone
+			// plusIndex := strings.Index(phone, "+")
 
-			phone = strings.ReplaceAll(phone, " ", "")
+			// phone = strings.ReplaceAll(phone, " ", "")
 
-			// Take substring from "+" onwards and remove all spaces
-			phone = phone[plusIndex:]
+			// // Take substring from "+" onwards and remove all spaces
+			// phone = phone[plusIndex:]
+
+			phone, err = NormalizePhoneNumber(*contact.Phones[0].Phone, "US")
+			if err != nil {
+				return err
+			}
 
 		}
 
@@ -89,7 +94,10 @@ func (l *OptimizerLead) RemoveDuplicatedContacts(existingContacts []Contact) {
 				existingEmail = *existingContact.Emails[0].Email
 			}
 			if len(existingContact.Phones) > 0 {
-				existingPhone = *existingContact.Phones[0].Phone
+				existingPhone, err = NormalizePhoneNumber(*existingContact.Phones[0].Phone, "US")
+				if err != nil {
+					return err
+				}
 
 			}
 
@@ -105,5 +113,7 @@ func (l *OptimizerLead) RemoveDuplicatedContacts(existingContacts []Contact) {
 
 	// set contacts of the lead to the list of new contacts so that only non existing contacts will be updated.
 	l.Contacts = newContacts
+
+	return nil
 
 }

@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/nyaruka/phonenumbers"
 )
 
 // HttpCloseIoClient represents a Close.io client
@@ -367,4 +369,26 @@ func (c *HttpCloseIoClient) SearchLead(name string) (*Lead, error) {
 		return &result.Data[0], nil
 	}
 	return nil, nil
+}
+
+// normalizePhoneNumber tries to parse a phone number without a region. If it fails, it assumes a default region.
+func NormalizePhoneNumber(number string, defaultRegion string) (string, error) {
+	// Remove spaces and unnecessary characters
+	number = strings.ReplaceAll(number, " ", "")
+
+	// If the number starts with "+", parse without region
+	var parsed *phonenumbers.PhoneNumber
+	var err error
+	if strings.HasPrefix(number, "+") {
+		parsed, err = phonenumbers.Parse(number, "")
+	} else {
+		parsed, err = phonenumbers.Parse(number, defaultRegion)
+	}
+
+	if err != nil {
+		return "", err
+	}
+
+	// Format to E.164 (e.g., +66969371167)
+	return phonenumbers.Format(parsed, phonenumbers.E164), nil
 }

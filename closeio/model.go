@@ -8,7 +8,7 @@ type LeadInterface interface {
 	SetID(id string)
 	SetOwner(owner string)
 	GetOwner() string
-	RemoveDuplicatedContacts(existingContacts []Contact) //removes contacts that already exist in the lead to make sure they do not keep duplicating
+	RemoveDuplicatedContacts(existingContacts []Contact) error //removes contacts that already exist in the lead to make sure they do not keep duplicating
 }
 
 type Lead struct {
