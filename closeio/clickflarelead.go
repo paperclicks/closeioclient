@@ -57,17 +57,17 @@ func (l *ClickFlareLead) RemoveDuplicatedContacts(existingContacts []Contact) er
 
 	newContacts := []Contact{}
 	var phone, email, existingEmail, existingPhone string
-	var err error
+	//var err error
 	for _, contact := range l.Contacts {
 
 		contactExists := false
 
 		email = *contact.Emails[0].Email
 
-		phone, err = NormalizePhoneNumber(*contact.Phones[0].Phone, "US")
-		if err != nil {
-			return err
-		}
+		phone, _ = NormalizePhoneNumber(*contact.Phones[0].Phone, "US")
+		// if err != nil {
+		// 	return err
+		// }
 
 		//check if there is a contact with the same email and phone number already
 		for _, existingContact := range existingContacts {
@@ -75,10 +75,10 @@ func (l *ClickFlareLead) RemoveDuplicatedContacts(existingContacts []Contact) er
 				existingEmail = *existingContact.Emails[0].Email
 			}
 			if len(existingContact.Phones) > 0 {
-				existingPhone, err = NormalizePhoneNumber(*existingContact.Phones[0].Phone, "US")
-				if err != nil {
-					return err
-				}
+				existingPhone, _ = NormalizePhoneNumber(*existingContact.Phones[0].Phone, "US")
+				// if err != nil {
+				// 	return err
+				// }
 
 			}
 
