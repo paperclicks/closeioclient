@@ -372,6 +372,39 @@ func (c *HttpCloseIoClient) SearchLead(name string) (*Lead, error) {
 	return nil, nil
 }
 
+// Search gets in input a Close.io JSON search object, searches for a leads or contacts and returns the first matching lead ID
+func (c *HttpCloseIoClient) Search(jsonQuery string) (*Lead, error) {
+	url := "https://api.close.com/api/v1/data/search/"
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonQuery)))
+	if err != nil {
+		return nil, err
+	}
+	req.SetBasicAuth(c.apiKey, "")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.sendRequestWithRateLimit(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("failed to search lead: %s", body)
+	}
+
+	var result SearchResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	if len(result.Data) > 0 {
+		return &result.Data[0], nil
+	}
+	return nil, nil
+}
+
 // normalizePhoneNumber tries to parse a phone number without a region. If it fails, it assumes a default region.
 func NormalizePhoneNumber(number string, defaultRegion string) (string, error) {
 	// Remove spaces and unnecessary characters
