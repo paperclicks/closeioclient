@@ -69,6 +69,37 @@ func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface, leadOwner str
 	return nil
 }
 
+// CreateOrUpdateLeadsV2 does not search for an existing lead but instead expects the existingLead object as an input.
+// If existing lead is nil then it creates a new lead, otherwise updates the existingLead with the details contained in "lead"
+func (c *HttpCloseIoClient) CreateOrUpdateLeadV2(lead LeadInterface, existingLead *Lead, leadOwner string) error {
+
+	if existingLead != nil {
+		// Update existing lead
+		lead.SetID(existingLead.ID)
+
+		//if the lead that we are updating exists but does not have an owner, and also a leadOwner has been generated, then set the lead owner
+		if existingLead.LeadOwner == "" && leadOwner != "" {
+			lead.SetOwner(leadOwner)
+		}
+
+		//make sure to remove any duplicate contacts that already exists
+		lead.RemoveDuplicatedContacts(existingLead.Contacts)
+
+		if err := c.UpdateLead(lead); err != nil {
+			return fmt.Errorf("failed to update lead: %v", err)
+		}
+	} else {
+		// Create new lead
+		// Set a lead owner
+		lead.SetOwner(leadOwner)
+		if err := c.CreateLead(lead); err != nil {
+			return fmt.Errorf("failed to create lead: %v", err)
+		}
+	}
+
+	return nil
+}
+
 // FindLeadByName searches for a lead by its name
 func (c *HttpCloseIoClient) FindLeadByName(name string) (*Lead, error) {
 	url := fmt.Sprintf("https://api.close.com/api/v1/lead/?query=%s", url.QueryEscape(name))
