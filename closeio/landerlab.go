@@ -27,7 +27,7 @@ type LanderLabCustomFields struct {
 	SubscriptionPlan          string     `json:"custom.cf_r8F5q4ulyXLv1YigseTo7pbx10kQXW2Gnzpl3rS2AET,omitempty"`
 	SubscriptionStatus        string     `json:"custom.cf_sziRp7jKr6BqbAFELqLqiS6F8f40HXo6vD264Sv76pm,omitempty"`
 	TotalPayments             int        `json:"custom.cf_WCtcQbYL4Jen8z3XT5kQ0IIY0gTi8oKWk76Pt49ymc0,omitempty"`
-	UserID                    string     `json:"custom.cf_ot7qBeR8O2wYxcFyVFIjGIRZjQKL6TAHuVPsBSDNLJ4,omitempty"`
+	Username                  string     `json:"custom.cf_ot7qBeR8O2wYxcFyVFIjGIRZjQKL6TAHuVPsBSDNLJ4,omitempty"`
 	Websites                  int        `json:"custom.cf_bnaDqczt7t8HYTRfUv3AKsLPRv7OdKWa4ltqIJzHGFn,omitempty"`
 }
 
