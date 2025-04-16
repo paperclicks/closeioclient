@@ -66,11 +66,10 @@ func (l *LanderLabLead) RemoveDuplicatedContacts(existingContacts []Contact) err
 
 		email = *contact.Emails[0].Email
 
-		phone, _ = NormalizePhoneNumber(*contact.Phones[0].Phone, "US")
-		// if err != nil {
-		// 	return err
-		// }
+		if len(contact.Phones) > 0 {
+			phone, _ = NormalizePhoneNumber(*contact.Phones[0].Phone, "US")
 
+		}
 		//check if there is a contact with the same email and phone number already
 		for _, existingContact := range existingContacts {
 			if len(existingContact.Emails) > 0 {
