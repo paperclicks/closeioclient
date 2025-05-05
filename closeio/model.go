@@ -8,6 +8,7 @@ type LeadInterface interface {
 	SetID(id string)
 	SetOwner(owner string)
 	GetOwner() string
+	GetContacts() []Contact
 	RemoveDuplicatedContacts(existingContacts []Contact) error //removes contacts that already exist in the lead to make sure they do not keep duplicating
 }
 
@@ -27,7 +28,6 @@ type Lead struct {
 	Custom           map[string]interface{} `json:"custom,omitempty"`
 	HTMLURL          string                 `json:"html_url,omitempty"`
 	IntegrationLinks []interface{}          `json:"integration_links,omitempty"`
-	ClickFlareCustomFields
 }
 
 type Contact struct {
@@ -91,5 +91,5 @@ type User struct {
 }
 
 type SearchResponse struct {
-	Data []Lead `json:"data"`
+	Data []LeadInterface `json:"data"`
 }

@@ -51,6 +51,10 @@ func (l *LanderLabLead) GetOwner() string {
 	return l.LanderLabCustomFields.LeadOwner
 }
 
+func (l *LanderLabLead) GetContacts() []Contact {
+	return l.Contacts
+}
+
 func (l *LanderLabLead) RemoveDuplicatedContacts(existingContacts []Contact) error {
 
 	if len(existingContacts) == 0 {

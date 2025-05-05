@@ -49,6 +49,10 @@ func (l *ClickFlareLead) GetOwner() string {
 	return l.ClickFlareCustomFields.LeadOwner
 }
 
+func (l *ClickFlareLead) GetContacts() []Contact {
+	return l.Contacts
+}
+
 func (l *ClickFlareLead) RemoveDuplicatedContacts(existingContacts []Contact) error {
 
 	if len(existingContacts) == 0 {

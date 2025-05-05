@@ -55,6 +55,10 @@ func (l *OptimizerLead) GetOwner() string {
 	return l.LeadOwner
 }
 
+func (l *OptimizerLead) GetContacts() []Contact {
+	return l.Contacts
+}
+
 func (l *OptimizerLead) RemoveDuplicatedContacts(existingContacts []Contact) error {
 
 	if len(existingContacts) == 0 {

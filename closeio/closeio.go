@@ -44,15 +44,15 @@ func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface, leadOwner str
 
 	if existingLead != nil {
 		// Update existing lead
-		lead.SetID(existingLead.ID)
+		lead.SetID(existingLead.GetID())
 
 		//if the lead that we are updating exists but does not have an owner, and also a leadOwner has been generated, then set the lead owner
-		if existingLead.LeadOwner == "" && leadOwner != "" {
+		if existingLead.GetOwner() == "" && leadOwner != "" {
 			lead.SetOwner(leadOwner)
 		}
 
 		//make sure to remove any duplicate contacts that already exists
-		lead.RemoveDuplicatedContacts(existingLead.Contacts)
+		lead.RemoveDuplicatedContacts(existingLead.GetContacts())
 
 		if err := c.UpdateLead(lead); err != nil {
 			return fmt.Errorf("failed to update lead: %v", err)
@@ -71,19 +71,19 @@ func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface, leadOwner str
 
 // CreateOrUpdateLeadsV2 does not search for an existing lead but instead expects the existingLead object as an input.
 // If existing lead is nil then it creates a new lead, otherwise updates the existingLead with the details contained in "lead"
-func (c *HttpCloseIoClient) CreateOrUpdateLeadV2(lead LeadInterface, existingLead *Lead, leadOwner string) error {
+func (c *HttpCloseIoClient) CreateOrUpdateLeadV2(lead LeadInterface, existingLead LeadInterface, leadOwner string) error {
 
 	if existingLead != nil {
 		// Update existing lead
-		lead.SetID(existingLead.ID)
+		lead.SetID(existingLead.GetID())
 
 		//if the lead that we are updating exists but does not have an owner, and also a leadOwner has been generated, then set the lead owner
-		if existingLead.LeadOwner == "" && leadOwner != "" {
+		if existingLead.GetOwner() == "" && leadOwner != "" {
 			lead.SetOwner(leadOwner)
 		}
 
 		//make sure to remove any duplicate contacts that already exists
-		lead.RemoveDuplicatedContacts(existingLead.Contacts)
+		lead.RemoveDuplicatedContacts(existingLead.GetContacts())
 
 		if err := c.UpdateLead(lead); err != nil {
 			return fmt.Errorf("failed to update lead: %v", err)
@@ -293,7 +293,7 @@ func parseRateLimitResetHeader(header string) int {
 }
 
 // SearchLead searches for a lead or contact by name and returns the first matching lead ID
-func (c *HttpCloseIoClient) SearchLead(name string) (*Lead, error) {
+func (c *HttpCloseIoClient) SearchLead(name string) (LeadInterface, error) {
 	url := "https://api.close.com/api/v1/data/search/"
 
 	queryPayload := fmt.Sprintf(`{
@@ -398,13 +398,13 @@ func (c *HttpCloseIoClient) SearchLead(name string) (*Lead, error) {
 	}
 
 	if len(result.Data) > 0 {
-		return &result.Data[0], nil
+		return result.Data[0], nil
 	}
 	return nil, nil
 }
 
 // Search gets in input a Close.io JSON search object, searches for a leads or contacts and returns the first matching lead ID
-func (c *HttpCloseIoClient) Search(jsonQuery string) (*Lead, error) {
+func (c *HttpCloseIoClient) Search(jsonQuery string) (*LeadInterface, error) {
 	url := "https://api.close.com/api/v1/data/search/"
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonQuery)))
