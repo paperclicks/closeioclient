@@ -404,7 +404,7 @@ func (c *HttpCloseIoClient) SearchLead(name string) (LeadInterface, error) {
 }
 
 // Search gets in input a Close.io JSON search object, searches for a leads or contacts and returns the first matching lead ID
-func (c *HttpCloseIoClient) Search(jsonQuery string) (*LeadInterface, error) {
+func (c *HttpCloseIoClient) Search(jsonQuery string) (LeadInterface, error) {
 	url := "https://api.close.com/api/v1/data/search/"
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonQuery)))
@@ -431,7 +431,7 @@ func (c *HttpCloseIoClient) Search(jsonQuery string) (*LeadInterface, error) {
 	}
 
 	if len(result.Data) > 0 {
-		return &result.Data[0], nil
+		return result.Data[0], nil
 	}
 	return nil, nil
 }
