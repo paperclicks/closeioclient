@@ -29,6 +29,10 @@ type ClickFlareCustomFields struct {
 	PreferredContact           *string    `json:"custom.cf_IvJOWqRDnAtvuQwfZYUQXlmtOnp8INPtH8KAnotQzNc,omitempty"`
 }
 
+type ClickFlareSearchResponse struct {
+	Data []ClickFlareLead `json:"data"`
+}
+
 func (l *ClickFlareLead) GetName() string {
 	return l.Name
 }

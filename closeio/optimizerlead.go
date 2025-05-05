@@ -35,6 +35,10 @@ type OptimizerCustomFields struct {
 	TotalPayments            float64    `json:"custom.cf_iF8l4t5IaSXjt8bKhyBl9Nb1IKmWnbFwLL3QJdD6hQI,omitempty"`
 }
 
+type OptimizerSearchResponse struct {
+	Data []OptimizerLead `json:"data"`
+}
+
 func (l *OptimizerLead) GetName() string {
 	return l.Name
 }

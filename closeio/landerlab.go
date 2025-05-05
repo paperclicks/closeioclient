@@ -31,6 +31,10 @@ type LanderLabCustomFields struct {
 	Websites                  int        `json:"custom.cf_bnaDqczt7t8HYTRfUv3AKsLPRv7OdKWa4ltqIJzHGFn,omitempty"`
 }
 
+type LanderLabSearchResponse struct {
+	Data []LanderLabLead `json:"data"`
+}
+
 func (l *LanderLabLead) GetName() string {
 	return l.Name
 }

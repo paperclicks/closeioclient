@@ -152,6 +152,8 @@ func main() {
 	//     "custom.cf_KUj0DbIykJYX5cRhRat69HsoZ52ALUOoqqB9xiCLuJX": "123456789"
 	// }`
 
+	testSearch()
+
 	existingLead := closeio.OptimizerLead{}
 	existingLead.Name = "Ervin Hoxha"
 	existingLead.TrafficSources = []string{"Outbrain"}
@@ -177,4 +179,101 @@ func main() {
 	// if err := client.CreateOrUpdateLead(&newLead); err != nil {
 	// 	log.Fatalf("Error creating or updating leads: %v", err)
 	// }
+}
+
+func testSearch() {
+
+	client := closeio.NewCloseIoClient("api_1v4Yhq7j3O87AVqVRom1e5.2UluRDAVGEy2CQXKSb8f8f")
+
+	email := "princemediacorp@gmail.com"
+
+	searchExistingCustomerQuery := fmt.Sprintf(`{
+		"limit": 1,
+		"query": {
+			"negate": false,
+			"queries": [
+				{
+					"negate": false,
+					"object_type": "lead",
+					"type": "object_type"
+				},
+				{
+					"negate": false,
+					"queries": [
+						{
+							"negate": false,
+							"related_object_type": "contact",
+							"related_query": {
+								"negate": false,
+								"queries": [
+									{
+										"negate": false,
+										"related_object_type": "contact_email",
+										"related_query": {
+											"negate": false,
+											"queries": [
+												{
+													"condition": {
+														"mode": "full_words",
+														"type": "text",
+														"value": "%s"
+													},
+													"field": {
+														"field_name": "email",
+														"object_type": "contact_email",
+														"type": "regular_field"
+													},
+													"negate": false,
+													"type": "field_condition"
+												}
+											],
+											"type": "and"
+										},
+										"this_object_type": "contact",
+										"type": "has_related"
+									}
+								],
+								"type": "and"
+							},
+							"this_object_type": "lead",
+							"type": "has_related"
+						},
+						{
+							"negate": false,
+							"queries": [
+								{
+									"condition": {
+										"type": "exists"
+									},
+									"field": {
+										"custom_field_id": "cf_ot7qBeR8O2wYxcFyVFIjGIRZjQKL6TAHuVPsBSDNLJ4",
+										"type": "custom_field"
+									},
+									"negate": false,
+									"type": "field_condition"
+								}
+							],
+							"type": "and"
+						}
+					],
+					"type": "and"
+				}
+			],
+			"type": "and"
+		},
+					  "_fields": {
+		"lead": ["contacts","custom", "display_name","description","url","status_id","organization_id","tasks","status_label","name","id","addresses","contacts","opportunities","custom","html_url","integration_links"]
+	  },
+		"results_limit": 1,
+		"sort": []
+	}`, email)
+
+	var searchResult closeio.LanderLabSearchResponse
+
+	err := client.Search(searchExistingCustomerQuery, &searchResult)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(searchResult.Data[0].Username)
+	}
 }

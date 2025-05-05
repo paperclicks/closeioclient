@@ -404,36 +404,28 @@ func (c *HttpCloseIoClient) SearchLead(name string) (LeadInterface, error) {
 }
 
 // Search gets in input a Close.io JSON search object, searches for a leads or contacts and returns the first matching lead ID
-func (c *HttpCloseIoClient) Search(jsonQuery string) (LeadInterface, error) {
+func (c *HttpCloseIoClient) Search(query string, target interface{}) error {
 	url := "https://api.close.com/api/v1/data/search/"
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonQuery)))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(query)))
 	if err != nil {
-		return nil, err
+		return err
 	}
 	req.SetBasicAuth(c.apiKey, "")
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.sendRequestWithRateLimit(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("failed to search lead: %s", body)
+		return fmt.Errorf("failed to search lead: %s", body)
 	}
 
-	var result SearchResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, err
-	}
-
-	if len(result.Data) > 0 {
-		return result.Data[0], nil
-	}
-	return nil, nil
+	return json.NewDecoder(resp.Body).Decode(target)
 }
 
 // normalizePhoneNumber tries to parse a phone number without a region. If it fails, it assumes a default region.
