@@ -8,7 +8,7 @@ type LanderLabLead struct {
 }
 
 type LanderLabCustomFields struct {
-	ActiveDomains             int        `json:"custom.cf_6Xh3qRiC4mMacLjepnBxpEEYZYURFGRi4nbnFkSZcDf,omitempty"`
+	ActiveDomains             float32    `json:"custom.cf_6Xh3qRiC4mMacLjepnBxpEEYZYURFGRi4nbnFkSZcDf,omitempty"`
 	ActiveIntegrations        string     `json:"custom.cf_ipkBqxsZrCqQKdKuSG9rdjc4VEFyrQjqMwWGEmZOeF4,omitempty"`
 	CancellationDate          *time.Time `json:"custom.cf_83J7o0Hon3LnOgh0GMxRLgwZpXnw0xI4nxXDVgUpYRJ,omitempty"`
 	FirstPayment              *time.Time `json:"custom.cf_NUnxmj02CWcwAF2Zcco486pM6t4dWzeqTapkb88G6zU,omitempty"`
@@ -26,9 +26,9 @@ type LanderLabCustomFields struct {
 	SignupDate                *time.Time `json:"custom.cf_Z9vma76NJFCi7K13jVyfBRQaco2z5uTv6GYLDh4NFAm,omitempty"`
 	SubscriptionPlan          string     `json:"custom.cf_r8F5q4ulyXLv1YigseTo7pbx10kQXW2Gnzpl3rS2AET,omitempty"`
 	SubscriptionStatus        string     `json:"custom.cf_sziRp7jKr6BqbAFELqLqiS6F8f40HXo6vD264Sv76pm,omitempty"`
-	TotalPayments             int        `json:"custom.cf_WCtcQbYL4Jen8z3XT5kQ0IIY0gTi8oKWk76Pt49ymc0,omitempty"`
+	TotalPayments             float32    `json:"custom.cf_WCtcQbYL4Jen8z3XT5kQ0IIY0gTi8oKWk76Pt49ymc0,omitempty"`
 	Username                  string     `json:"custom.cf_ot7qBeR8O2wYxcFyVFIjGIRZjQKL6TAHuVPsBSDNLJ4,omitempty"`
-	Websites                  int        `json:"custom.cf_bnaDqczt7t8HYTRfUv3AKsLPRv7OdKWa4ltqIJzHGFn,omitempty"`
+	Websites                  float32    `json:"custom.cf_bnaDqczt7t8HYTRfUv3AKsLPRv7OdKWa4ltqIJzHGFn,omitempty"`
 }
 
 type LanderLabSearchResponse struct {
