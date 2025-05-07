@@ -73,7 +73,7 @@ func (c *HttpCloseIoClient) CreateOrUpdateLead(lead LeadInterface, leadOwner str
 // If existing lead is nil then it creates a new lead, otherwise updates the existingLead with the details contained in "lead"
 func (c *HttpCloseIoClient) CreateOrUpdateLeadV2(lead LeadInterface, existingLead LeadInterface, leadOwner string) error {
 
-	if existingLead != nil {
+	if existingLead != nil && existingLead.GetID() != "" {
 		// Update existing lead
 		lead.SetID(existingLead.GetID())
 
