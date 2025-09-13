@@ -253,26 +253,87 @@ func (c *HttpCloseIoClient) GetUsers() ([]User, error) {
 }
 
 // sendRequestWithRateLimit handles HTTP requests with rate limit management
+// func (c *HttpCloseIoClient) sendRequestWithRateLimit(req *http.Request) (*http.Response, error) {
+// 	for {
+// 		resp, err := http.DefaultClient.Do(req)
+// 		if err != nil {
+// 			fmt.Printf("sendRequestWithRateLimit error: %s", err.Error())
+
+// 			return nil, err
+// 		}
+
+// 		if resp.StatusCode == 429 {
+// 			resetSeconds := parseRateLimitResetHeader(resp.Header.Get("RateLimit"))
+// 			if resetSeconds > 0 {
+// 				fmt.Printf("Rate limit reached. Waiting for %d seconds before retrying...\n", resetSeconds)
+// 				time.Sleep(time.Duration(resetSeconds) * time.Second)
+// 				continue
+// 			}
+// 		}
+
+// 		return resp, nil
+// 	}
+// }
+
 func (c *HttpCloseIoClient) sendRequestWithRateLimit(req *http.Request) (*http.Response, error) {
+	const (
+		maxRetries        = 5               // configurable
+		defaultBackoff    = 5 * time.Second // fallback if Retry-After header is missing
+		maxBackoff        = 60 * time.Second
+		backoffMultiplier = 2
+	)
+
+	retryCount := 0
+	backoff := defaultBackoff
+
 	for {
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
-			fmt.Printf("sendRequestWithRateLimit error: %s", err.Error())
-
+			fmt.Printf("sendRequestWithRateLimit error: %s\n", err.Error())
 			return nil, err
 		}
 
-		if resp.StatusCode == 429 {
-			resetSeconds := parseRateLimitResetHeader(resp.Header.Get("RateLimit"))
-			if resetSeconds > 0 {
-				fmt.Printf("Rate limit reached. Waiting for %d seconds before retrying...\n", resetSeconds)
-				time.Sleep(time.Duration(resetSeconds) * time.Second)
-				continue
-			}
+		if resp.StatusCode != http.StatusTooManyRequests {
+			// Success or non-429 error
+			return resp, nil
 		}
 
-		return resp, nil
+		// Handle 429 Rate Limit
+		retryAfter := parseRetryAfterHeader(resp.Header.Get("Retry-After"))
+
+		if retryAfter <= 0 {
+			fmt.Printf("Rate limit hit. Using fallback backoff: %v\n", backoff)
+		} else {
+			backoff = time.Duration(retryAfter) * time.Second
+		}
+
+		if retryCount >= maxRetries {
+			return nil, fmt.Errorf("rate limit exceeded after %d retries", retryCount)
+		}
+
+		fmt.Printf("Rate limit hit (attempt %d/%d). Waiting for %v before retrying...\n", retryCount+1, maxRetries, backoff)
+		time.Sleep(backoff)
+
+		// Exponential backoff
+		backoff = backoff * time.Duration(backoffMultiplier)
+		if backoff > maxBackoff {
+			backoff = maxBackoff
+		}
+
+		retryCount++
 	}
+}
+
+func parseRetryAfterHeader(header string) int {
+	if header == "" {
+		return 0
+	}
+	seconds, err := strconv.Atoi(header)
+	if err != nil {
+		fmt.Printf("Invalid Retry-After header value: %s\n", header)
+		return 0
+	}
+	return seconds
 }
 
 // parseRateLimitResetHeader extracts the reset time in seconds from the RateLimit header
