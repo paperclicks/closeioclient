@@ -257,7 +257,7 @@ func (c *HttpCloseIoClient) sendRequestWithRateLimit(req *http.Request) (*http.R
 	for {
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
-			log.Printf("sendRequestWithRateLimit error: %s", err.Error())
+			fmt.Printf("sendRequestWithRateLimit error: %s", err.Error())
 
 			return nil, err
 		}
@@ -265,7 +265,7 @@ func (c *HttpCloseIoClient) sendRequestWithRateLimit(req *http.Request) (*http.R
 		if resp.StatusCode == 429 {
 			resetSeconds := parseRateLimitResetHeader(resp.Header.Get("RateLimit"))
 			if resetSeconds > 0 {
-				log.Printf("Rate limit reached. Waiting for %d seconds before retrying...\n", resetSeconds)
+				fmt.Printf("Rate limit reached. Waiting for %d seconds before retrying...\n", resetSeconds)
 				time.Sleep(time.Duration(resetSeconds) * time.Second)
 				continue
 			}
