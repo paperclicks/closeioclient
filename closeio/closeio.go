@@ -422,7 +422,7 @@ func (c *HttpCloseIoClient) Search(query string, target interface{}) error {
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("failed to search lead: %s", body)
+		return fmt.Errorf("failed to search lead: %s - %s", err.Error(), body)
 	}
 
 	return json.NewDecoder(resp.Body).Decode(target)
