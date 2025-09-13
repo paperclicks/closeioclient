@@ -484,7 +484,7 @@ func (c *HttpCloseIoClient) MergeLead(sourceID, destinationID string) error {
 		// Check for "participating in another merge" error
 		if strings.Contains(string(respBody), "participating in another merge") {
 			if attempt < maxRetries {
-				log.Printf("Merge delayed (attempt %d/%d), retrying after %v...", attempt, maxRetries, retryDelay)
+				//log.Printf("Merge delayed (attempt %d/%d), retrying after %v...", attempt, maxRetries, retryDelay)
 				time.Sleep(retryDelay)
 				continue
 			}
