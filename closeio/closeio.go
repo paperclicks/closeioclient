@@ -257,6 +257,8 @@ func (c *HttpCloseIoClient) sendRequestWithRateLimit(req *http.Request) (*http.R
 	for {
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
+			log.Printf("sendRequestWithRateLimit error: %s", err.Error())
+
 			return nil, err
 		}
 
