@@ -449,3 +449,31 @@ func NormalizePhoneNumber(number string, defaultRegion string) (string, error) {
 	// Format to E.164 (e.g., +66969371167)
 	return phonenumbers.Format(parsed, phonenumbers.E164), nil
 }
+
+func (c *HttpCloseIoClient) MergeLead(sourceID, destinationID string) error {
+	mergeBody := map[string]string{
+		"source":      sourceID,
+		"destination": destinationID,
+	}
+	body, _ := json.Marshal(mergeBody)
+
+	req, err := http.NewRequest("POST", "https://api.close.com/api/v1/lead/merge/", bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.SetBasicAuth(c.apiKey, "")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		respBody, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("merge failed: %s", respBody)
+	}
+	return nil
+}
