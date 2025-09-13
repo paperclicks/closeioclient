@@ -457,23 +457,43 @@ func (c *HttpCloseIoClient) MergeLead(sourceID, destinationID string) error {
 	}
 	body, _ := json.Marshal(mergeBody)
 
-	req, err := http.NewRequest("POST", "https://api.close.com/api/v1/lead/merge/", bytes.NewReader(body))
-	if err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.SetBasicAuth(c.apiKey, "")
+	var maxRetries = 5
+	var retryDelay = 2 * time.Second
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		req, err := http.NewRequest("POST", "https://api.close.com/api/v1/lead/merge/", bytes.NewReader(body))
+		if err != nil {
+			return err
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.SetBasicAuth(c.apiKey, "")
 
-	if resp.StatusCode != http.StatusOK {
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
 		respBody, _ := io.ReadAll(resp.Body)
+
+		if resp.StatusCode == http.StatusOK {
+			return nil
+		}
+
+		// Check for "participating in another merge" error
+		if strings.Contains(string(respBody), "participating in another merge") {
+			if attempt < maxRetries {
+				log.Printf("Merge delayed (attempt %d/%d), retrying after %v...", attempt, maxRetries, retryDelay)
+				time.Sleep(retryDelay)
+				continue
+			}
+			return fmt.Errorf("merge failed after retries: %s", respBody)
+		}
+
+		// Other error (not recoverable)
 		return fmt.Errorf("merge failed: %s", respBody)
 	}
-	return nil
+
+	return fmt.Errorf("unexpected merge failure for source %s to destination %s", sourceID, destinationID)
 }
